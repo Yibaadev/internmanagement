@@ -8,16 +8,18 @@ import co.kozao.internmanagement.database.ConnectionDataBase;
 import co.kozao.internmanagement.model.Supervisor;
 
 public class SupervisorDAOimpl implements SupervisorDAO {
-	private static final String SQL_INSERT = "INSERT INTO Supervisor (login , password) VALUES (?, ?)";
-	private static final String SQL_SELECT = "SELECT * FROM Supervisor WHERE login =?";
+	private static final String SQL_INSERT = "INSERT INTO supervisor (login , password) VALUES (?, ?)";
+	private static final String SQL_SELECT = "SELECT * FROM supervisor WHERE login =?";
 	private static final String SQL_SELECT_LOGIN = "SELECT * FROM Supervisor WHERE login =? AND password =?";
 
 	@Override
 	public void save(Supervisor supervisor) {
 		try {
 			
-			Connection connection = ConnectionDataBase.getConnection();
-			PreparedStatement ps = connection.prepareStatement(SQL_INSERT);
+			Connection conn = ConnectionDataBase
+			        .getInstance()
+			        .getConnection();
+			PreparedStatement ps = conn.prepareStatement(SQL_INSERT);
 			ps.setString(1, supervisor.getLogin());
 			ps.setString(2, supervisor.getPassword());
 			
@@ -33,8 +35,10 @@ public class SupervisorDAOimpl implements SupervisorDAO {
 		
 		try {
 			
-			Connection connection = ConnectionDataBase.getConnection();
-			PreparedStatement ps = connection.prepareStatement(SQL_SELECT);
+			Connection conn = ConnectionDataBase
+			        .getInstance()
+			        .getConnection();
+			PreparedStatement ps = conn.prepareStatement(SQL_SELECT);
 			ps.setString(1, login);
 			ResultSet rs = ps.executeQuery();
 			
@@ -57,8 +61,10 @@ public class SupervisorDAOimpl implements SupervisorDAO {
 
 try {
 			
-			Connection connection = ConnectionDataBase.getConnection();
-			PreparedStatement ps = connection.prepareStatement(SQL_SELECT_LOGIN);
+	Connection conn = ConnectionDataBase
+	        .getInstance()
+	        .getConnection();
+			PreparedStatement ps = conn.prepareStatement(SQL_SELECT_LOGIN);
 			ps.setString(1, login);
 			ps.setString(2, password);
 			ResultSet rs = ps.executeQuery();
