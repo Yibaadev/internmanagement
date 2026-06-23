@@ -1,10 +1,8 @@
-<%@ page contentType="text/html;charset=UTF-8" %>
-
-<%@ page import="co.kozao.internmanagement.model.Supervisor" %>
+<%@ page contentType="text/html;charset=UTF-8"%>
+<%@ page import="co.kozao.internmanagement.model.Supervisor"%>
 
 <%
-Supervisor supervisor =
-        (Supervisor) session.getAttribute("supervisor");
+Supervisor supervisor = (Supervisor) session.getAttribute("supervisor");
 %>
 
 <!DOCTYPE html>
@@ -15,23 +13,21 @@ Supervisor supervisor =
 </head>
 <body>
 
-<h1>Dashboard</h1>
+	<h1>Dashboard Supervisor</h1>
 
-<p>
-Bienvenue
-<strong>
-<%= supervisor.getLogin() %>
-</strong>
-</p>
+	<p>
+		Bienvenue <strong> <%=supervisor.getLogin()%>
+		</strong>
+	</p>
 
-<p>
-ID :
-<%= supervisor.getId() %>
-</p>
+	<p>
+		Identifiant :
+		<%=supervisor.getId()%>
+	</p>
 
-<a href="logout">
-    Déconnexion
-</a>
+	<br>
+
+	<a href="logout"> Deconnexion </a>
 
 </body>
 </html>

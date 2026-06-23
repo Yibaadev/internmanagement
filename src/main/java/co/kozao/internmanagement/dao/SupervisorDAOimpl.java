@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import org.mindrot.jbcrypt.BCrypt;
+
 import co.kozao.internmanagement.database.ConnectionDataBase;
 import co.kozao.internmanagement.model.Supervisor;
 
@@ -69,12 +71,19 @@ try {
 			ps.setString(2, password);
 			ResultSet rs = ps.executeQuery();
 			
-			if(rs.next()){
-				
-				return new Supervisor(rs.getLong("id"),
-						rs.getString("login"),
-						rs.getString("password"));
-			}
+			 String hashedPassword =
+	                    rs.getString("password");
+
+	            // Vérification BCrypt
+	            if (BCrypt.checkpw(password, hashedPassword)) {
+
+	                return new Supervisor(
+	                        rs.getLong("id"),
+	                        rs.getString("login"),
+	                        hashedPassword);
+	            }
+	      
+
 			
 		} catch (Exception e) {
 			
