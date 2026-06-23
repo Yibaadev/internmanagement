@@ -7,44 +7,53 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 /**
  * Servlet implementation class InterManagementServlet
  */
-@WebServlet("/InterManagementServlet")
+@WebServlet("/interManagement")
 public class InterManagementServlet extends HttpServlet {
-	
-	private static final long serialVersionUID = 1L;
-	
-	
 
-	
+	private static final long serialVersionUID = 1L;
+
 	public void init() throws ServletException {
-		
-		
 
 	}
-	
-    /**
-     * Default constructor. 
-     */
-    public InterManagementServlet() {
-       
-    }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
+	 * Default constructor.
+	 */
+	public InterManagementServlet() {
+
+	}
+
+	/**
+	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+			throws ServletException, IOException {
 
-    }
+		HttpSession session = request.getSession(false);
+
+		if (session == null || session.getAttribute("supervisor") == null) {
+
+			response.sendRedirect("login");
+
+			return;
+		}
+
+		request.getRequestDispatcher("dashboard.jsp").forward(request, response);
+	}
+
 	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
+	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
+	 *      response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-        }
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
 	}
 
+}

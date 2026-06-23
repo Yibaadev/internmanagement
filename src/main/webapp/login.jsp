@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,24 +8,33 @@
 </head>
 <body>
 
-	<h2>Connexion Supervisor</h2>
+	<h1>Connexion Supervisor</h1>
 
 	<%
-		String erreur = (String) request.getAttribute("erreur");
-		if(erreur != null){
-	%>
+String error = (String) request.getAttribute("error");
 
+if(error != null){
+%>
 	<p style="color: red;">
-		<%= erreur %>
+		<%= error %>
 	</p>
-
-	<%}%>
+	<%
+}
+%>
 
 	<form action="login" method="post">
 
-		<label>Login :</label><br> <input type="text" name="login"
-			required><br> <br> <label>Password :</label><br>
-		<input type="password" name="password" required><br> <br>
+		<div>
+			<label>Login</label> <input type="text" name="login">
+		</div>
+
+		<br>
+
+		<div>
+			<label>Mot de passe</label> <input type="password" name="password">
+		</div>
+
+		<br>
 
 		<button type="submit">Se connecter</button>
 

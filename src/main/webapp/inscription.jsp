@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page contentType="text/html;charset=UTF-8"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,27 +8,41 @@
 </head>
 <body>
 
-<h2>Inscription Supervisor</h2>
+	<h1>Inscription Supervisor</h1>
 
-<form action="inscription" method="post">
+	<%
+String error = (String) request.getAttribute("error");
 
-    <label>Login :</label><br>
-    <input type="text" name="login" required><br><br>
+if(error != null){
+%>
+	<p style="color: red;">
+		<%= error %>
+	</p>
+	<%
+}
+%>
 
-    <label>Password :</label><br>
-    <input type="password" name="password" required><br><br>
+	<form action="inscription" method="post">
 
-    <button type="submit">
-        S'inscrire
-    </button>
+		<div>
+			<label>Login</label> <input type="text" name="login">
+		</div>
 
-</form>
+		<br>
 
-<br>
+		<div>
+			<label>Mot de passe</label> <input type="password" name="password">
+		</div>
 
-<a href="login">
-    Se connecter
-</a>
+		<br>
+
+		<button type="submit">S'inscrire</button>
+
+	</form>
+
+	<br>
+
+	<a href="login"> Déjà un compte ? Se connecter </a>
 
 </body>
 </html>
