@@ -17,7 +17,7 @@ public class SupervisorDAOimpl implements SupervisorDAO {
 	public void save(Supervisor supervisor) {
 		try {
 
-			Connection conn = ConnectionDataBase.getInstance().getConnection();
+			Connection conn = ConnectionDataBase.getConnection();
 			PreparedStatement ps = conn.prepareStatement(SQL_INSERT);
 			ps.setString(1, supervisor.getLogin());
 			ps.setString(2, supervisor.getPassword());
@@ -34,7 +34,7 @@ public class SupervisorDAOimpl implements SupervisorDAO {
 
 		try {
 
-			Connection conn = ConnectionDataBase.getInstance().getConnection();
+			Connection conn = ConnectionDataBase.getConnection();
 			PreparedStatement ps = conn.prepareStatement(SQL_SELECT);
 			ps.setString(1, login);
 			ResultSet rs = ps.executeQuery();
@@ -55,7 +55,7 @@ public class SupervisorDAOimpl implements SupervisorDAO {
 	public Supervisor login(String login, String password) {
 
 		try {
-			Connection conn = ConnectionDataBase.getInstance().getConnection();
+			Connection conn = ConnectionDataBase.getConnection();
 
 			PreparedStatement ps = conn.prepareStatement(SQL_SELECT);
 
