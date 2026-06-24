@@ -51,8 +51,15 @@ public class SupervisorDAOimpl implements SupervisorDAO {
 		return null;
 	}
 
+	
 	@Override
 	public Supervisor login(String login, String password) {
+	    // 1. On cherche l'utilisateur uniquement par son login (on réutilise SQL_SELECT)
+	    try {
+	        Connection conn = ConnectionDataBase.getInstance().getConnection();
+	        PreparedStatement ps = conn.prepareStatement(SQL_SELECT); // Utilisation de SQL_SELECT au lieu de SQL_SELECT_LOGIN
+	        ps.setString(1, login);
+	        ResultSet rs = ps.executeQuery();
 
 		try {
 			Connection conn = ConnectionDataBase.getConnection();

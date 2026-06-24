@@ -25,6 +25,10 @@ public class Intern {
 		this.supervisor = supervisor;
 		 
 	}
+	
+	public Intern() {
+
+	}
 
 
 	public int getId() {
