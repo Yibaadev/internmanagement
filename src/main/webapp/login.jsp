@@ -25,7 +25,9 @@ if(error != null){
 	<form action="login" method="post">
 
 		<div>
-			<label>Login</label> <input type="text" name="login">
+			<label>Login</label> <input type="text" name="login"
+				value="<%= request.getAttribute("login") != null ? request.getAttribute("login") : "" %>"
+				required>
 		</div>
 
 		<br>

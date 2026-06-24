@@ -12,21 +12,18 @@ import co.kozao.internmanagement.model.Supervisor;
 public class SupervisorDAOimpl implements SupervisorDAO {
 	private static final String SQL_INSERT = "INSERT INTO supervisor (login , password) VALUES (?, ?)";
 	private static final String SQL_SELECT = "SELECT * FROM supervisor WHERE login =?";
-	private static final String SQL_SELECT_LOGIN = "SELECT * FROM Supervisor WHERE login =? AND password =?";
 
 	@Override
 	public void save(Supervisor supervisor) {
 		try {
-			
-			Connection conn = ConnectionDataBase
-			        .getInstance()
-			        .getConnection();
+
+			Connection conn = ConnectionDataBase.getInstance().getConnection();
 			PreparedStatement ps = conn.prepareStatement(SQL_INSERT);
 			ps.setString(1, supervisor.getLogin());
 			ps.setString(2, supervisor.getPassword());
-			
+
 			ps.executeUpdate();
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -34,25 +31,21 @@ public class SupervisorDAOimpl implements SupervisorDAO {
 
 	@Override
 	public Supervisor findByLogin(String login) {
-		
+
 		try {
-			
-			Connection conn = ConnectionDataBase
-			        .getInstance()
-			        .getConnection();
+
+			Connection conn = ConnectionDataBase.getInstance().getConnection();
 			PreparedStatement ps = conn.prepareStatement(SQL_SELECT);
 			ps.setString(1, login);
 			ResultSet rs = ps.executeQuery();
-			
-			if(rs.next()){
-				
-				return new Supervisor(rs.getLong("id"),
-						rs.getString("login"),
-						rs.getString("password"));
+
+			if (rs.next()) {
+
+				return new Supervisor(rs.getLong("id"), rs.getString("login"), rs.getString("password"));
 			}
-			
+
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 		}
 		return null;
@@ -61,36 +54,30 @@ public class SupervisorDAOimpl implements SupervisorDAO {
 	@Override
 	public Supervisor login(String login, String password) {
 
-try {
-			
-	Connection conn = ConnectionDataBase
-	        .getInstance()
-	        .getConnection();
-			PreparedStatement ps = conn.prepareStatement(SQL_SELECT_LOGIN);
+		try {
+			Connection conn = ConnectionDataBase.getInstance().getConnection();
+
+			PreparedStatement ps = conn.prepareStatement(SQL_SELECT);
+
 			ps.setString(1, login);
-			ps.setString(2, password);
+
 			ResultSet rs = ps.executeQuery();
-			
-			 String hashedPassword =
-	                    rs.getString("password");
 
-	            // Vérification BCrypt
-	            if (BCrypt.checkpw(password, hashedPassword)) {
+			if (rs.next()) {
 
-	                return new Supervisor(
-	                        rs.getLong("id"),
-	                        rs.getString("login"),
-	                        hashedPassword);
-	            }
-	      
+				String hashedPassword = rs.getString("password");
 
-			
+				if (BCrypt.checkpw(password, hashedPassword)) {
+
+					return new Supervisor(rs.getLong("id"), rs.getString("login"), hashedPassword);
+				}
+			}
+
 		} catch (Exception e) {
-			
 			e.printStackTrace();
 		}
+
 		return null;
-		
 	}
-	
+
 }
