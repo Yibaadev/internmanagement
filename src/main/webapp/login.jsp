@@ -4,11 +4,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Connexion</title>
+<title>Connection</title>
 </head>
 <body>
 
-	<h1>Connexion Supervisor</h1>
+	<h1>Connection Supervisor</h1>
 
 	<%
 String error = (String) request.getAttribute("error");
@@ -25,7 +25,9 @@ if(error != null){
 	<form action="login" method="post">
 
 		<div>
-			<label>Login</label> <input type="text" name="login">
+			<label>Login</label> <input type="text" name="login"
+				value="<%= request.getAttribute("login") != null ? request.getAttribute("login") : "" %>"
+				required>
 		</div>
 
 		<br>

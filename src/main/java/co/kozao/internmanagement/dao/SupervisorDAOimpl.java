@@ -12,13 +12,12 @@ import co.kozao.internmanagement.model.Supervisor;
 public class SupervisorDAOimpl implements SupervisorDAO {
 	private static final String SQL_INSERT = "INSERT INTO supervisor (login , password) VALUES (?, ?)";
 	private static final String SQL_SELECT = "SELECT * FROM supervisor WHERE login =?";
-	private static final String SQL_SELECT_LOGIN = "SELECT * FROM Supervisor WHERE login =? AND password =?";
 
 	@Override
 	public void save(Supervisor supervisor) {
 		try {
 
-			Connection conn = ConnectionDataBase.getInstance().getConnection();
+			Connection conn = ConnectionDataBase.getConnection();
 			PreparedStatement ps = conn.prepareStatement(SQL_INSERT);
 			ps.setString(1, supervisor.getLogin());
 			ps.setString(2, supervisor.getPassword());
@@ -35,7 +34,7 @@ public class SupervisorDAOimpl implements SupervisorDAO {
 
 		try {
 
-			Connection conn = ConnectionDataBase.getInstance().getConnection();
+			Connection conn = ConnectionDataBase.getConnection();
 			PreparedStatement ps = conn.prepareStatement(SQL_SELECT);
 			ps.setString(1, login);
 			ResultSet rs = ps.executeQuery();
@@ -62,23 +61,30 @@ public class SupervisorDAOimpl implements SupervisorDAO {
 	        ps.setString(1, login);
 	        ResultSet rs = ps.executeQuery();
 
-	        // 2. CORRECTION : On appelle rs.next() pour se positionner sur la ligne trouvée
-	        if (rs.next()) {
-	            // On récupère le mot de passe haché stocké en BDD
-	            String hashedPassword = rs.getString("password");
+		try {
+			Connection conn = ConnectionDataBase.getConnection();
 
-	            // 3. Vérification BCrypt : on compare le mot de passe saisi en clair avec le haché de la BDD
-	            if (BCrypt.checkpw(password, hashedPassword)) {
-	                // Si c'est correct, on crée et on renvoie le superviseur
-	                return new Supervisor(rs.getLong("id"), rs.getString("login"), hashedPassword);
-	            }
-	        }
+			PreparedStatement ps = conn.prepareStatement(SQL_SELECT);
 
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
-	    // Si l'utilisateur n'existe pas ou si le mot de passe est faux
-	    return null; 
+			ps.setString(1, login);
+
+			ResultSet rs = ps.executeQuery();
+
+			if (rs.next()) {
+
+				String hashedPassword = rs.getString("password");
+
+				if (BCrypt.checkpw(password, hashedPassword)) {
+
+					return new Supervisor(rs.getLong("id"), rs.getString("login"), hashedPassword);
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
 	}
 
 }

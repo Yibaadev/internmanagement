@@ -61,7 +61,7 @@ public class LoginServlet extends HttpServlet {
 			if (SessionManager.isConnected(login)) {
 
 				request.setAttribute("error", "Ce compte est déjà connecté.");
-
+				request.setAttribute("login", login);
 				request.getRequestDispatcher("login.jsp").forward(request, response);
 
 				return;
@@ -78,6 +78,7 @@ public class LoginServlet extends HttpServlet {
 		} catch (Exception e) {
 
 			request.setAttribute("error", e.getMessage());
+			request.setAttribute("login", login);
 
 			request.getRequestDispatcher("login.jsp").forward(request, response);
 		}

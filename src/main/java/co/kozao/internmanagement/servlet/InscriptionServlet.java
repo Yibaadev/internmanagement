@@ -56,7 +56,7 @@ public class InscriptionServlet extends HttpServlet {
 		} catch (Exception e) {
 
 			request.setAttribute("error", e.getMessage());
-
+			request.setAttribute("login", login);
 			request.getRequestDispatcher("inscription.jsp").forward(request, response);
 		}
 	}
