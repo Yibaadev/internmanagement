@@ -11,7 +11,7 @@
     <h2>Espace Superviseur - Gestion des Stagiaires</h2>
     
 s
-    <p>Bienvenue, M. <strong>${supervisor.name}</strong></p> 
+    <p>Bienvenue, M. <strong>${supervisor.login}</strong></p> 
     
     <hr>
     <h3>Ajouter un Stagiaire</h3>
