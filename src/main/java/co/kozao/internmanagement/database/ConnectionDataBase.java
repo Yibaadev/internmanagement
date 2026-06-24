@@ -1,52 +1,35 @@
 package co.kozao.internmanagement.database;
 
-import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
 
-import co.kozao.internanagement.exception.ConfiguartionDatabasseException;
+public final class ConnectionDataBase {
 
-public class ConnectionDataBase {
+    private ConnectionDataBase() {
+    }
 
-	private static String url;
-	private static String username;
-	private static String password;
+    public static Connection getConnection() throws SQLException {
 
-	private static ConnectionDataBase instance;
+        String url = System.getenv("DB_URL");
+        String username = System.getenv("DB_USERNAME");
+        String password = System.getenv("DB_PASSWORD");
 
-	private ConnectionDataBase() {
-	}
+        if (url == null || username == null || password == null) {
+            throw new RuntimeException(
+                "Variables d'environnement manquantes : DB_URL, DB_USERNAME ou DB_PASSWORD"
+            );
+        }
 
-	public static ConnectionDataBase getInstance() {
+        try {
+            Class.forName("org.postgresql.Driver"); 
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(
+                "Driver PostgreSQL introuvable. Vérifie la dépendance JDBC.",
+                e
+            );
+        }
 
-		if (instance == null) {
-
-			Properties properties = new Properties();
-
-			try (InputStream is = Thread.currentThread().getContextClassLoader()
-					.getResourceAsStream("application.properties")) {
-
-				properties.load(is);
-
-				url = properties.getProperty("url");
-				username = properties.getProperty("nomutilisateur");
-				password = properties.getProperty("motdepasse");
-
-				Class.forName(properties.getProperty("driver"));
-
-			} catch (Exception e) {
-				throw new RuntimeException("Erreur config DB", e);
-			}
-
-			instance = new ConnectionDataBase();
-		}
-
-		return instance;
-	}
-
-	public Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(url, username, password);
-	}
+        return DriverManager.getConnection(url, username, password);
+    }
 }
