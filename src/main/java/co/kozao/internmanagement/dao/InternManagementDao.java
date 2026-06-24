@@ -15,6 +15,8 @@ public interface InternManagementDao {
 	
 	void delete(int id);
 
+	Intern findByEmail(String email);
+
 
 	
 

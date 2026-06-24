@@ -1,9 +1,10 @@
 package co.kozao.internmanagement.servlet;
 
-
 import co.kozao.internmanagement.service.InternManagementService;
 import co.kozao.internmanagement.service.InternManagementServiceImpl;
+
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import co.kozao.internmanagement.model.Intern;
@@ -15,100 +16,146 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
-/**
- * Servlet implementation class InterManagementServlet
- */
 @WebServlet("/interManagement")
 public class InterManagementServlet extends HttpServlet {
 
-	private static final long serialVersionUID = 1L;
-	private InternManagementService service = new InternManagementServiceImpl();
+    private static final long serialVersionUID = 1L;
+    private final InternManagementService service = new InternManagementServiceImpl();
 
-	public void init() throws ServletException {
-		
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-	}
+        HttpSession session = request.getSession(false);
 
-	/**
-	 * Default constructor.
-	 */
-	public InterManagementServlet() {
+        if (session == null || session.getAttribute("supervisor") == null) {
+            response.sendRedirect("login");
+            return;
+        }
 
-	}
+        String action = request.getParameter("action");
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
+        try {
 
-		HttpSession session = request.getSession(false);
+            if ("delete".equals(action)) {
 
-		if (session == null || session.getAttribute("supervisor") == null) {
+                int id = Integer.parseInt(request.getParameter("id"));
+                service.remove(id);
 
-			response.sendRedirect("login");
+                response.sendRedirect("interManagement");
+                return;
+            }
 
-			return;
-		}
-		
-		List<Intern> listInterns = service.getAll();
-		
-	
-		request.setAttribute("listeStagiaires", listInterns);
-		
-		request.getRequestDispatcher("dashboard.jsp").forward(request, response);
-	}
+            if ("edit".equals(action)) {
 
+                int id = Integer.parseInt(request.getParameter("id"));
+                Intern internToEdit = service.getById(id);
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
-	 *      response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		
-		HttpSession session = request.getSession(false);
-		Supervisor supervisor = (Supervisor) session.getAttribute("supervisor");
+                request.setAttribute("internToEdit", internToEdit);
+            }
 
-	    // 2. Identifier l'action envoyée par le formulaire hidden
-	    String action = request.getParameter("action");
+            List<Intern> listInterns = service.getAll();
+            request.setAttribute("listeStagiaires", listInterns);
 
-	    if ("add".equals(action)) {
-	        try {
-	            // 3. Récupération des données du formulaire JSP
-	            String name = request.getParameter("name");
-	            String surname = request.getParameter("surname");
-	            String email = request.getParameter("email");
-	            String startDate = request.getParameter("startDate");
-	            String endDate = request.getParameter("endDate");
-	            int group = Integer.parseInt(request.getParameter("group"));
+            request.getRequestDispatcher("dashboard.jsp")
+                    .forward(request, response);
 
-	            // 4. Instanciation de l'objet Intern avec son Superviseur
-	            Intern newIntern = new Intern();
-	            newIntern.setName(name);
-	            newIntern.setSurname(surname);
-	            newIntern.setEmail(email);
-	            newIntern.setStartDate(startDate);
-	            newIntern.setEndDate(endDate);
-	            newIntern.setGroup(group);
-	            newIntern.setSupervisor(supervisor); // Liaison clé étrangère
+        } catch (Exception e) {
 
-	            // 5. Appel de la couche Service pour l'insertion en BDD
-	            service.register(newIntern); // Ajustez selon le nom dans votre InternManagementService
+            request.setAttribute("error", e.getMessage());
 
-	            // 6. Redirection vers le doGet pour rafraîchir et afficher la nouvelle liste
-	            response.sendRedirect("interManagement");
+            List<Intern> listInterns = service.getAll();
+            request.setAttribute("listeStagiaires", listInterns);
 
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            // En cas d'erreur (ex: problème de format de nombre), on recharge la page avec un message
-	            request.setAttribute("error", "Erreur lors de l'ajout du stagiaire : " + e.getMessage());
-	            doGet(request, response);
-	        }
-	    }
-		
+            request.getRequestDispatcher("dashboard.jsp")
+                    .forward(request, response);
+        }
+    }
 
-	}
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
+        HttpSession session = request.getSession(false);
+
+        if (session == null || session.getAttribute("supervisor") == null) {
+            response.sendRedirect("login");
+            return;
+        }
+
+        Supervisor supervisor = (Supervisor) session.getAttribute("supervisor");
+        String action = request.getParameter("action");
+
+        try {
+
+            if ("add".equals(action)) {
+
+                String name = request.getParameter("name");
+                String surname = request.getParameter("surname");
+                String email = request.getParameter("email");
+                String groupStr = request.getParameter("group");
+                String startDateStr = request.getParameter("startDate");
+                String endDateStr = request.getParameter("endDate");
+
+                LocalDate startDate = LocalDate.parse(startDateStr);
+                LocalDate endDate = LocalDate.parse(endDateStr);
+                int group = Integer.parseInt(groupStr);
+
+                Intern intern = new Intern();
+                intern.setName(name);
+                intern.setSurname(surname);
+                intern.setEmail(email);
+                intern.setGroup(group);
+                intern.setStartDate(startDate);
+                intern.setEndDate(endDate);
+                intern.setSupervisor(supervisor);
+
+                service.register(intern);
+
+                response.sendRedirect("interManagement");
+                return;
+            }
+
+       
+            if ("update".equals(action)) {
+
+                int id = Integer.parseInt(request.getParameter("id"));
+
+                String name = request.getParameter("name");
+                String surname = request.getParameter("surname");
+                String email = request.getParameter("email");
+                String groupStr = request.getParameter("group");
+                String startDateStr = request.getParameter("startDate");
+                String endDateStr = request.getParameter("endDate");
+
+                LocalDate startDate = LocalDate.parse(startDateStr);
+                LocalDate endDate = LocalDate.parse(endDateStr);
+                int group = Integer.parseInt(groupStr);
+
+                Intern intern = new Intern();
+                intern.setId(id);
+                intern.setName(name);
+                intern.setSurname(surname);
+                intern.setEmail(email);
+                intern.setGroup(group);
+                intern.setStartDate(startDate);
+                intern.setEndDate(endDate);
+                intern.setSupervisor(supervisor);
+
+                service.modify(intern);
+
+                response.sendRedirect("interManagement");
+            }
+
+        } catch (Exception e) {
+
+            request.setAttribute("error", e.getMessage());
+
+            List<Intern> listInterns = service.getAll();
+            request.setAttribute("listeStagiaires", listInterns);
+
+            request.getRequestDispatcher("dashboard.jsp")
+                    .forward(request, response);
+        }
+    }
 }
