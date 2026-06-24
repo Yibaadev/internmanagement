@@ -1,24 +1,22 @@
 package co.kozao.internmanagement.dao;
 
 import java.sql.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import co.kozao.internmanagement.database.ConnectionDataBase;
 import co.kozao.internmanagement.model.*;
 
+
 public class InternManagementDaoImpl implements InternManagementDao {
 
-	// private Connection connection;
-
-	public InternManagementDaoImpl(Connection connection) {
-		// this.connection = connection;
-	}
 
 	@Override
 	public void create(Intern intern) {
 
-		String sql = "INSERT INTO Intern (name, surname, email, startDate, endDate, `group`, supervisorId) VALUES (?,?,?,?,?,?,?)";
-		try (Connection connection = ConnectionDataBase.getConnection();
+		String sql = "INSERT INTO Intern (name, surname, email, startDate, endDate, `group', supervisorId) VALUES (?,?,?,?,?,?,?)";
+		try (Connection connection = ConnectionDataBase.getInstance().getConnection();
+				
 			PreparedStatement stmt = connection.prepareStatement(sql)) {
 			
 			stmt.setString(1, intern.getName());
@@ -43,7 +41,7 @@ public class InternManagementDaoImpl implements InternManagementDao {
 
 		String sql = "SELECT * FROM Intern WHERE id = ? ";
 
-		try (Connection connection = ConnectionDataBase.getConnection();
+		try (Connection connection = ConnectionDataBase.getInstance().getConnection();
 				PreparedStatement pstmt = connection.prepareStatement(sql)) {
 			pstmt.setInt(1, id);
 			ResultSet rs = pstmt.executeQuery();
@@ -68,7 +66,7 @@ public class InternManagementDaoImpl implements InternManagementDao {
 
 		String sql = "SELECT * FROM Intern";
 
-		try (Connection connection = ConnectionDataBase.getConnection();
+		try (Connection connection = ConnectionDataBase.getInstance().getConnection();
 				Statement stmt = connection.createStatement();
 				ResultSet rs = stmt.executeQuery(sql)) {
 			while (rs.next()) {
@@ -92,7 +90,7 @@ public class InternManagementDaoImpl implements InternManagementDao {
 
 		String sql = "UPDATE Intern SET name, surname = ?, email = ?, startDate = ?, endDate = ?, `group` = ?, supervisorId = ? ";
 		
-		try(Connection connection = ConnectionDataBase.getConnection();
+		try(Connection connection = ConnectionDataBase.getInstance().getConnection();
 			PreparedStatement stmt = connection.prepareStatement(sql)){
 			stmt.setString(1, intern.getName());
 			stmt.setString(2, intern.getSurname());
@@ -112,7 +110,7 @@ public class InternManagementDaoImpl implements InternManagementDao {
 	public void delete(int id) {
 		String sql = "DELETE FROM Intern WHERE id = ?";
 		
-		try(Connection connection = ConnectionDataBase.getConnection();
+		try(Connection connection = ConnectionDataBase.getInstance().getConnection();
 			PreparedStatement stmt = connection.prepareStatement(sql)){
 			stmt.setInt(1, id);
 			stmt.executeUpdate();

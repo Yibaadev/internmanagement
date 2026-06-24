@@ -1,5 +1,7 @@
 package co.kozao.internmanagement.service;
 
+import java.util.List;
+
 import org.mindrot.jbcrypt.BCrypt;
 
 import co.kozao.internmanagement.dao.SupervisorDAO;
@@ -8,11 +10,17 @@ import co.kozao.internmanagement.model.Supervisor;
 
 public class SupervisorServiceImpl implements SupervisorService  {
 	
-	 private SupervisorDAO supervisorDAO;
+	 private SupervisorServiceImpl supervisorDAO = new SupervisorServiceImpl();
 	 
-	 public SupervisorServiceImpl() {
-	        supervisorDAO = new SupervisorDAOimpl();
-	    }
+	
+	 
+	 @Override
+	 public List<Supervisor> getAllSupervisors(){
+		 return supervisorDAO.listerTous();
+	 }
+	 
+	 
+	 
 	@Override
 	public void register(Supervisor supervisor) {
 		
