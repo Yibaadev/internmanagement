@@ -35,15 +35,7 @@ public class InterManagementServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		HttpSession session = request.getSession(false);
-
-		if (session == null || session.getAttribute("supervisor") == null) {
-
-			response.sendRedirect("login");
-
-			return;
-		}
-
+		
 		request.getRequestDispatcher("dashboard.jsp").forward(request, response);
 	}
 
