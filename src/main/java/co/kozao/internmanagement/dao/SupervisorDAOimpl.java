@@ -51,9 +51,11 @@ public class SupervisorDAOimpl implements SupervisorDAO {
 		return null;
 	}
 
+	
 	@Override
 	public Supervisor login(String login, String password) {
-
+	    // 1. On cherche l'utilisateur uniquement par son login (on réutilise SQL_SELECT)
+	  
 		try {
 			Connection conn = ConnectionDataBase.getConnection();
 

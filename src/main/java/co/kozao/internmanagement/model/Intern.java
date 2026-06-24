@@ -1,5 +1,6 @@
 package co.kozao.internmanagement.model;
 
+import java.time.LocalDate;
 
 public class Intern {
 	
@@ -7,13 +8,13 @@ public class Intern {
 	private String name;
 	private String surname;
 	private String email;
-	private String startDate;
-	private String endDate;
+	private LocalDate startDate;
+	private LocalDate endDate;
 	private int group;
 	private Supervisor supervisor;
 	
 	
-	public Intern(int id, String name, String surname, String email, String startDate, String endDate, int group, Supervisor supervisor ) {
+	public Intern(int id, String name, String surname, String email, LocalDate startDate, LocalDate endDate, int group, Supervisor supervisor ) {
 		
 		this.id = id;
 		this.name = name;
@@ -24,6 +25,10 @@ public class Intern {
 		this.group = group ;
 		this.supervisor = supervisor;
 		 
+	}
+	
+	public Intern() {
+
 	}
 
 
@@ -67,22 +72,22 @@ public class Intern {
 	}
 
 
-	public String getStartDate() {
+	public LocalDate getStartDate() {
 		return startDate;
 	}
 
 
-	public void setStartDate(String startDate) {
+	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 	}
 
 
-	public String getEndDate() {
+	public LocalDate getEndDate() {
 		return endDate;
 	}
 
 
-	public void setEndDate(String endDate) {
+	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
 	}
 

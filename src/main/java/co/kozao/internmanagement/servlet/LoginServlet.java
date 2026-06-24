@@ -36,7 +36,7 @@ public class LoginServlet extends HttpServlet {
 		HttpSession session = request.getSession(false);
 
 		if (session != null && session.getAttribute("supervisor") != null) {
-			response.sendRedirect("dashboard.jsp");
+			response.sendRedirect("/interManagement");
 			return;
 		}
 
@@ -73,7 +73,7 @@ public class LoginServlet extends HttpServlet {
 
 			SessionManager.connect(login);
 
-			response.sendRedirect("dashboard.jsp");
+			response.sendRedirect("interManagement");
 
 		} catch (Exception e) {
 
