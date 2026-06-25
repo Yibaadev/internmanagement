@@ -295,6 +295,30 @@ tr:hover {
 		</div>
 
 	</div>
+	
+	<script>
+    // Fonction pour faire disparaître les messages après 5 secondes
+    setTimeout(function() {
+        var successMessages = document.querySelectorAll('.success-message');
+        var errorMessages = document.querySelectorAll('.error-message');
+        
+        successMessages.forEach(function(msg) {
+            msg.style.transition = 'opacity 0.5s';
+            msg.style.opacity = '0';
+            setTimeout(function() {
+                msg.style.display = 'none';
+            }, 500);
+        });
+        
+        errorMessages.forEach(function(msg) {
+            msg.style.transition = 'opacity 0.5s';
+            msg.style.opacity = '0';
+            setTimeout(function() {
+                msg.style.display = 'none';
+            }, 500);
+        });
+    }, 5000); // 5000ms = 5 secondes
+</script>
 
 </body>
 </html>
