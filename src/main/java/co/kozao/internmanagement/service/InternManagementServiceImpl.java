@@ -79,11 +79,6 @@ public class InternManagementServiceImpl implements InternManagementService {
 			throw new IllegalArgumentException("Identifiant invalide.");
 		}
 
-		Intern intern = dao.read(id);
-
-		if (intern == null) {
-			throw new IllegalArgumentException("Le stagiaire à supprimer n'existe pas.");
-		}
 
 		dao.delete(id);
 	}
