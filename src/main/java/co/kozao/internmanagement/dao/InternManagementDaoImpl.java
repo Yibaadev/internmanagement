@@ -155,4 +155,74 @@ public class InternManagementDaoImpl implements InternManagementDao {
 		}
 	}
 
+	@Override
+	public List<Intern> findBySupervisor(long supervisorId) {
+
+		List<Intern> interns = new ArrayList<>();
+
+		String sql = "SELECT * FROM Intern WHERE supervisorId = ?";
+
+		try (Connection connection = ConnectionDataBase.getConnection();
+
+				PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+			stmt.setLong(1, supervisorId);
+
+			ResultSet rs = stmt.executeQuery();
+
+			while (rs.next()) {
+
+				Supervisor supervisor = new Supervisor();
+
+				supervisor.setId(rs.getLong("supervisorId"));
+
+				interns.add(new Intern(rs.getInt("id"), rs.getString("name"), rs.getString("surname"),
+						rs.getString("email"), rs.getObject("startDate", LocalDate.class),
+						rs.getObject("endDate", LocalDate.class), rs.getInt("group"), supervisor));
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return interns;
+	}
+
+	@Override
+	public Intern findByIdAndSupervisor(int internId, long supervisorId) {
+
+		String sql = """
+				SELECT *
+				FROM Intern
+				WHERE id = ?
+				AND supervisorId = ?
+				""";
+
+		try (Connection connection = ConnectionDataBase.getConnection();
+
+				PreparedStatement stmt = connection.prepareStatement(sql)) {
+
+			stmt.setInt(1, internId);
+			stmt.setLong(2, supervisorId);
+
+			ResultSet rs = stmt.executeQuery();
+
+			if (rs.next()) {
+
+				Supervisor supervisor = new Supervisor();
+
+				supervisor.setId(rs.getLong("supervisorId"));
+
+				return new Intern(rs.getInt("id"), rs.getString("name"), rs.getString("surname"), rs.getString("email"),
+						rs.getObject("startDate", LocalDate.class), rs.getObject("endDate", LocalDate.class),
+						rs.getInt("group"), supervisor);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
 }

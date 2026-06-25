@@ -11,6 +11,13 @@ public interface InternManagementService {
 	Intern getById(int id);
 	
 	List<Intern> getAll();
+	
+	List<Intern> getBySupervisor(
+	        long supervisorId);
+
+	Intern getByIdAndSupervisor(
+	        int internId,
+	        long supervisorId);
 
 	void modify(Intern intern);
 
