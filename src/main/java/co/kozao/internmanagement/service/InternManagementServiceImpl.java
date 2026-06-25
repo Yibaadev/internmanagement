@@ -126,4 +126,30 @@ public class InternManagementServiceImpl implements InternManagementService {
 			throw new IllegalArgumentException("Le superviseur est obligatoire.");
 		}
 	}
+
+	@Override
+	public List<Intern> getBySupervisor(long supervisorId) {
+
+		return dao.findBySupervisor(supervisorId);
+	}
+
+	@Override
+	public Intern getByIdAndSupervisor(int internId, long supervisorId) {
+
+		if (internId <= 0) {
+			throw new IllegalArgumentException("Identifiant stagiaire invalide.");
+		}
+
+		if (supervisorId <= 0) {
+			throw new IllegalArgumentException("Identifiant superviseur invalide.");
+		}
+
+		Intern intern = dao.findByIdAndSupervisor(internId, supervisorId);
+
+		if (intern == null) {
+			throw new IllegalArgumentException("Ce stagiaire n'existe pas ou ne vous appartient pas.");
+		}
+
+		return intern;
+	}
 }

@@ -1,14 +1,14 @@
 package co.kozao.internmanagement.servlet;
 
-import co.kozao.internmanagement.service.InternManagementService;
-import co.kozao.internmanagement.service.InternManagementServiceImpl;
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
 import co.kozao.internmanagement.model.Intern;
 import co.kozao.internmanagement.model.Supervisor;
+import co.kozao.internmanagement.service.InternManagementService;
+import co.kozao.internmanagement.service.InternManagementServiceImpl;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,143 +19,150 @@ import jakarta.servlet.http.HttpSession;
 @WebServlet("/interManagement")
 public class InterManagementServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
-    private final InternManagementService service = new InternManagementServiceImpl();
+	private static final long serialVersionUID = 1L;
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+	private final InternManagementService service = new InternManagementServiceImpl();
 
-        HttpSession session = request.getSession(false);
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
-        if (session == null || session.getAttribute("supervisor") == null) {
-            response.sendRedirect("login");
-            return;
-        }
+		HttpSession session = request.getSession(false);
 
-        String action = request.getParameter("action");
+		Supervisor supervisor = (Supervisor) session.getAttribute("supervisor");
 
-        try {
+		String action = request.getParameter("action");
 
-            if ("delete".equals(action)) {
+		try {
 
-                int id = Integer.parseInt(request.getParameter("id"));
-                service.remove(id);
+			if ("delete".equals(action)) {
 
-                response.sendRedirect("interManagement");
-                return;
-            }
+				int id = Integer.parseInt(request.getParameter("id"));
 
-            if ("edit".equals(action)) {
+				service.remove(id);
+				service.remove(id);
 
-                int id = Integer.parseInt(request.getParameter("id"));
-                Intern internToEdit = service.getById(id);
+				session.setAttribute("success", "Stagiaire supprimé avec succès.");
 
-                request.setAttribute("internToEdit", internToEdit);
-            }
+				response.sendRedirect("interManagement");
+				return;
+			}
 
-            List<Intern> listInterns = service.getAll();
-            request.setAttribute("listeStagiaires", listInterns);
+			if ("edit".equals(action)) {
 
-            request.getRequestDispatcher("dashboard.jsp")
-                    .forward(request, response);
+				int id = Integer.parseInt(request.getParameter("id"));
 
-        } catch (Exception e) {
+				Intern internToEdit = service.getByIdAndSupervisor(id, supervisor.getId());
 
-            request.setAttribute("error", e.getMessage());
+				request.setAttribute("internToEdit", internToEdit);
+			}
 
-            List<Intern> listInterns = service.getAll();
-            request.setAttribute("listeStagiaires", listInterns);
+			List<Intern> listInterns = service.getBySupervisor(supervisor.getId());
 
-            request.getRequestDispatcher("dashboard.jsp")
-                    .forward(request, response);
-        }
-    }
+			request.setAttribute("listeStagiaires", listInterns);
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+			request.getRequestDispatcher("dashboard.jsp").forward(request, response);
 
-        HttpSession session = request.getSession(false);
+		} catch (Exception e) {
 
-        if (session == null || session.getAttribute("supervisor") == null) {
-            response.sendRedirect("login");
-            return;
-        }
+			request.setAttribute("error", e.getMessage());
 
-        Supervisor supervisor = (Supervisor) session.getAttribute("supervisor");
-        String action = request.getParameter("action");
+			List<Intern> listInterns = service.getBySupervisor(supervisor.getId());
 
-        try {
+			request.setAttribute("listeStagiaires", listInterns);
 
-            if ("add".equals(action)) {
+			String success = (String) session.getAttribute("success");
 
-                String name = request.getParameter("name");
-                String surname = request.getParameter("surname");
-                String email = request.getParameter("email");
-                String groupStr = request.getParameter("group");
-                String startDateStr = request.getParameter("startDate");
-                String endDateStr = request.getParameter("endDate");
+			if (success != null) {
 
-                LocalDate startDate = LocalDate.parse(startDateStr);
-                LocalDate endDate = LocalDate.parse(endDateStr);
-                int group = Integer.parseInt(groupStr);
+				request.setAttribute("success", success);
 
-                Intern intern = new Intern();
-                intern.setName(name);
-                intern.setSurname(surname);
-                intern.setEmail(email);
-                intern.setGroup(group);
-                intern.setStartDate(startDate);
-                intern.setEndDate(endDate);
-                intern.setSupervisor(supervisor);
+				session.removeAttribute("success");
+			}
+			request.getRequestDispatcher("dashboard.jsp").forward(request, response);
+		}
+	}
 
-                service.register(intern);
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
-                response.sendRedirect("interManagement");
-                return;
-            }
+		HttpSession session = request.getSession(false);
 
-       
-            if ("update".equals(action)) {
+		Supervisor supervisor = (Supervisor) session.getAttribute("supervisor");
 
-                int id = Integer.parseInt(request.getParameter("id"));
+		String action = request.getParameter("action");
 
-                String name = request.getParameter("name");
-                String surname = request.getParameter("surname");
-                String email = request.getParameter("email");
-                String groupStr = request.getParameter("group");
-                String startDateStr = request.getParameter("startDate");
-                String endDateStr = request.getParameter("endDate");
+		try {
 
-                LocalDate startDate = LocalDate.parse(startDateStr);
-                LocalDate endDate = LocalDate.parse(endDateStr);
-                int group = Integer.parseInt(groupStr);
+			String name = request.getParameter("name");
 
-                Intern intern = new Intern();
-                intern.setId(id);
-                intern.setName(name);
-                intern.setSurname(surname);
-                intern.setEmail(email);
-                intern.setGroup(group);
-                intern.setStartDate(startDate);
-                intern.setEndDate(endDate);
-                intern.setSupervisor(supervisor);
+			String surname = request.getParameter("surname");
 
-                service.modify(intern);
+			String email = request.getParameter("email");
 
-                response.sendRedirect("interManagement");
-            }
+			int group = Integer.parseInt(request.getParameter("group"));
 
-        } catch (Exception e) {
+			LocalDate startDate = LocalDate.parse(request.getParameter("startDate"));
 
-            request.setAttribute("error", e.getMessage());
+			LocalDate endDate = LocalDate.parse(request.getParameter("endDate"));
 
-            List<Intern> listInterns = service.getAll();
-            request.setAttribute("listeStagiaires", listInterns);
+			if ("add".equals(action)) {
 
-            request.getRequestDispatcher("dashboard.jsp")
-                    .forward(request, response);
-        }
-    }
+				Intern intern = new Intern();
+
+				intern.setName(name);
+				intern.setSurname(surname);
+				intern.setEmail(email);
+				intern.setGroup(group);
+				intern.setStartDate(startDate);
+				intern.setEndDate(endDate);
+
+				intern.setSupervisor(supervisor);
+
+				service.register(intern);
+
+				session.setAttribute("success", "Stagiaire enregistré avec succès.");
+
+				response.sendRedirect("interManagement");
+
+				return;
+			}
+
+			if ("update".equals(action)) {
+
+				int id = Integer.parseInt(request.getParameter("id"));
+
+				Intern intern = new Intern();
+
+				intern.setId(id);
+				intern.setName(name);
+				intern.setSurname(surname);
+				intern.setEmail(email);
+				intern.setGroup(group);
+				intern.setStartDate(startDate);
+				intern.setEndDate(endDate);
+
+				intern.setSupervisor(supervisor);
+
+				service.modify(intern);
+
+				session.setAttribute("success", "Stagiaire modifié avec succès.");
+
+				response.sendRedirect("interManagement");
+
+				return;
+			}
+
+		} catch (Exception e) {
+
+			request.setAttribute("error", e.getMessage());
+
+			List<Intern> listInterns = service.getBySupervisor(supervisor.getId());
+
+			request.setAttribute("listeStagiaires", listInterns);
+
+			request.getRequestDispatcher("dashboard.jsp").forward(request, response);
+		}
+	}
 }
